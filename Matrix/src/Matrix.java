@@ -49,11 +49,11 @@ public class Matrix{
     }
 
     public Double get(int r, int c){
-        return this.getData()[r][c];
+        return this.getData()[c][r];
     }
 
     public void set(int r, int c, Double val){
-        this.getData()[r][c] = val;
+        this.getData()[c][r] = val;
     }
 
     public Matrix clone(){
@@ -113,6 +113,38 @@ public class Matrix{
         return ret;
     }
 
+    public Matrix eleMul(Matrix other){
+        Matrix ret = this.clone();
+        for (int r=0; r<this.getNumRows(); r++){
+            for (int c=0; c<this.getNumCols(); c++){
+                ret.set(r, c, ret.get(r, c)*other.get(r, c));
+            }
+        }
+        return ret;
+    }
+
+    public Double largestValInRow(int r){
+        Double largVal = 0D;
+        for (int c=0; c<this.getNumCols(); c++){
+            Double val = this.get(r, c);
+            if (val > largVal){
+                largVal = val;
+            }
+        }
+        return largVal;
+    }
+
+    public Double smallestValInRow(int r){
+        Double smallVal = largestValInRow(r);
+        for (int c=0; c<this.getNumCols(); c++){
+            Double val = this.get(r, c);
+            if (val < smallVal){
+                smallVal = val;
+            }
+        }
+        return smallVal;
+    }
+
     public Matrix pow(int pow) throws Exception {
         if (this.getNumCols() != this.getNumRows()){
             throw new InvalidSizeException("The matrix is not square!");
@@ -141,12 +173,37 @@ public class Matrix{
         return ret;
     }
 
+    public Matrix getMatRow(int r) throws InvalidSizeException {
+        Matrix ret = Matrix.zero(this.getNumRows(), this.getNumCols());
+        for (int i=0; i<this.getNumCols(); i++){
+            ret.set(r, i, this.get(r, i));
+        }
+        return ret;
+    }
+
+    public Matrix tileRow(int r){
+        Matrix ret = this.clone();
+        for (int i=0; i<this.getNumRows(); i++){
+            if (i != r){
+                for (int c=0; c<this.getNumCols(); c++){
+                    ret.set(i, c, this.get(r, c));
+                }
+            }
+        }
+        return ret;
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
+        sb.append("  ");
+        for (int c=0; c<this.getNumCols(); c++){
+            sb.append(String.format("%4d", c));
+        }
+        sb.append('\n');
         for (int r = 0; r<this.getNumRows(); r++){
             sb.append(r).append(": ");
-            for (int c = 0; c<this.getNumCols(); c++){
+            for (int c = 0; c<this.getNumRows(); c++){
                 double val = this.get(r, c);
                 sb.append(val == 0 ? "   " : val).append(" ");
             }

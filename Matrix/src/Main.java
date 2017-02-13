@@ -59,9 +59,21 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        int size = 6;
-        int start = 100;
+        int size = 3;
+        int start = 4;
         Matrix grid = genGridCOnnectionMatrix(size, size);
-
+        for (int i = 0; i < size*size; i++){
+            grid.set(0, i, 0D);
+            grid.set(i, 0, 0D);
+        }
+        System.out.println(grid);
+        for (int i = 0; i < size*size; i++){
+            grid.set(i, start, 0D);
+        }
+        System.out.println(grid);
+        Matrix move = grid.getMatRow(start);
+        Matrix move2 = move.mul(grid);
+        System.out.println(move2);
+        Matrix stuff = move2.eleMul(move);
     }
 }
