@@ -59,21 +59,79 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        int size = 3;
-        int start = 4;
+        int size = 4;
+        int start = 5;
         Matrix grid = genGridCOnnectionMatrix(size, size);
-        for (int i = 0; i < size*size; i++){
-            grid.set(0, i, 0D);
-            grid.set(i, 0, 0D);
-        }
+//        for (int i = 0; i < size*size; i++){
+//            grid.set(0, i, 0D);
+//            grid.set(i, 0, 0D);
+//        }
         System.out.println(grid);
-        for (int i = 0; i < size*size; i++){
-            grid.set(i, start, 0D);
-        }
-        System.out.println(grid);
+//        for (int i = 0; i < size*size; i++){
+//            grid.set(i, start, 0D);
+//        }
         Matrix move = grid.getMatRow(start);
         Matrix move2 = move.mul(grid);
-        System.out.println(move2);
-        Matrix stuff = move2.eleMul(move);
+        Matrix commonPaths = move2;
+
+        System.out.println(commonPaths);
+
+        for (int c=0; c<grid.getNumRows(); c++){
+            Double val = commonPaths.get(start, c);
+            if (val == 0D){
+                continue;
+            }
+
+            for (int r=0; r<grid.getNumRows(); r++){
+                if (grid.get(r, c) == 0D){
+                    continue;
+                }
+                Double cval = commonPaths.get(start, r);
+                if (cval == 0){
+                    continue;
+                }
+                if (cval <= val){
+                    grid.set(r, c, 0D);
+                }
+            }
+        }
+
+        System.out.println(grid);
+
+//        Position dir = new Position(1,1);
+//        Position curr = new Position(start/size, start%size);
+//        for (int i=0; i<8; i++) {
+//            Position checkPos = curr.add(dir);
+//            dir = nextTerm(dir);
+//            start = checkPos.x*size + checkPos.y;
+//            move = grid.getMatRow(start);
+//            move2 = move.mul(grid);
+//            commonPaths = move2.eleMul(move);
+//
+//            if (start == 2);
+//                System.out.println(commonPaths);
+//
+//            for (int c = 0; c < grid.getNumRows(); c++) {
+//                Double val = commonPaths.get(start, c);
+//                if (val == 0D) {
+//                    continue;
+//                }
+//
+//                for (int r = 0; r < grid.getNumRows(); r++) {
+//                    if (grid.get(r, c) == 0D) {
+//                        continue;
+//                    }
+//                    Double cval = commonPaths.get(start, r);
+//                    if (cval == 0) {
+//                        continue;
+//                    }
+//                    if (cval <= val) {
+//                        grid.set(r, c, 0D);
+//                    }
+//                }
+//            }
+//        }
+//
+//        System.out.println(grid);
     }
 }
