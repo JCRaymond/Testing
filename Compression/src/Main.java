@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class Main {
 
@@ -22,12 +24,6 @@ public class Main {
         return f;
     }
 
-    public static void copyValsIn(byte[] big, byte[] small, int startIndex){
-        for (int i = 0; i<small.length; i++){
-            big[startIndex+i] = small[i];
-        }
-    }
-
     public static double timeReadForChunkSize(FileInputStream in, int chunkSize) throws IOException {
         long s = System.nanoTime();
         int numBytes = in.available();
@@ -36,7 +32,7 @@ public class Main {
         byte[] byteChunk = new byte[chunkSize];
         for (int i=0; i<numChunks; i++){
             in.read(byteChunk);
-            copyValsIn(bytes, byteChunk, 0);
+            bytes = byteChunk;
         }
         long e = System.nanoTime();
         return (e-s)/1000000000.;
@@ -49,9 +45,9 @@ public class Main {
         File fin = new File(path + fileIn);
         File fout = new File(path + fileOut);
 
-        fin.delete();
+        //fin.delete();
         if (!fin.isFile()){
-            int size = (int)Math.pow(2, 32);
+            int size = (int)Math.pow(2, 25);
             System.out.println("Generating...");
             System.out.println(size + " bytes");
             fin = genBigFile(fileIn, size);
@@ -59,29 +55,38 @@ public class Main {
         }
 
         FileInputStream in = new FileInputStream(fin);
-        System.out.println(in.available() + " bytes");
 
-        int lastChunkSize = 2048;
-        int chunkSize = lastChunkSize;
-        int numTrials = 100;
-        double lastTime = timeReadForChunkSize(in, chunkSize);
-        double time;
-        chunkSize *= 2;
-        for (int i=0; i<numTrials; i++){
-            in = new FileInputStream(fin);
-            time = timeReadForChunkSize(in, chunkSize);
-            System.out.println(chunkSize + ": " + time);
-            if (time < lastTime){
-                lastChunkSize = chunkSize;
-                chunkSize *= 2;
-            }
-            else {
-                int temp = chunkSize;
-                chunkSize = lastChunkSize;
-                lastChunkSize = temp;
-            }
-            lastTime = time;
-        }
+//        HashMap<byte[], Integer> amounts = new HashMap<>();
+//        int seqLen = 4;
+//        int chunkSize = 65536;
+//        byte[] bytes = new byte[chunkSize];
+//        int numBytes = in.available();
+//        int numReads = (int) Math.ceil(numBytes/(double)chunkSize);
+//        for (int i=0; i<numReads; i++){
+//            in.read(bytes);
+//            for (int j=0; j<chunkSize && i*chunkSize+j<numBytes; j+=seqLen){
+//                byte[] seq = Arrays.copyOfRange(bytes, j, j+seqLen);
+//                Integer amnt = amounts.getOrDefault(seq, 0);
+//                amounts.put(seq, amnt+1);
+//            }
+//        }
+//
+//        for (byte[] seq : amounts.keySet()){
+//            if (amounts.get(seq) > 1){
+//                StringBuilder sb = new StringBuilder("[");
+//                for (byte b : seq){
+//                    sb.append((char)b).append(", ");
+//                }
+//                sb.delete(sb.length()-2, sb.length());
+//                sb.append("]=").append(amounts.get(seq));
+//                System.out.println(sb);
+//            }
+//        }
 
+        HashMap<Integer[], Integer> test = new HashMap<>();
+        test.put(new Integer[]{0}, 1);
+        test.put(new Integer[]{1}, 1);
+        test.put(new Integer[]{1}, 2);
+        System.out.println(test);
     }
 }
